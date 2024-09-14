@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/mongogrator.png" />
+  <img src="/assets/mongogrator.png" alt="Mongogrator" />
 </p>
 
 Mongogrator is a lightweight typescript-based package for MongoDB database migrations. 
@@ -107,6 +107,12 @@ mongogrator migrate
 
 This will run all the migrations and log them to the database under the specified collection name in the config `logsCollectionName`
 
+Now if you run the `list` command again, it will reveal that the file migration has completed
+
+```bash
+1726339397_add_user           MIGRATED
+```
+
 ### Logs collection schema
 
 ```ts
@@ -124,7 +130,7 @@ Each migration log is created with the `createdAt` date assigned before running 
 
 ```ts
 const mongogratorConfig = {
-	url: 'mongodb://admin:password@localhost:27030/?authSource=admin', // Cluster url
+	url: 'mongodb://localhost:27017', // Cluster url
 	database: 'test', // Database name for which the migrations will be executed
 	migrationsPath: './migrations', // Relative directory to the location of the commands
 	logsCollectionName: 'migrations', // Name of the logs collection that will be stored in the database
