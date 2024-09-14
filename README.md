@@ -30,7 +30,7 @@ Or use it directly by adding npx prefix before every command
 npx mongogrator init
 ```
 
-The `init` command spawns the `mongogrator.config.ts file
+The `init` command spawns the `mongogrator.config.ts` file
 
 ## List of commands
 
