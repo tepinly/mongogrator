@@ -9,7 +9,7 @@ import packageJson from './package.json'
 const args = process.argv.slice(2)
 const argument = args[0]
 const commandPath = process.cwd()
-const configName = '../assets/mongogrator.config.ts'
+const configName = 'mongogrator.config.ts'
 const commandList = [
 	{
 		command: 'help',
@@ -59,8 +59,8 @@ const processor = async () => {
 	switch (argument) {
 		case 'init':
 			{
-				const filePath = path.join(commandPath, `./${configName}`)
-				const configPath = path.join(__dirname, `../assets/${configName}`)
+				const filePath = path.join(commandPath, configName)
+				const configPath = path.join(__dirname, '../assets/', configName)
 				fs.copyFileSync(configPath, filePath)
 				console.log(`Config file created at ${filePath}`)
 			}

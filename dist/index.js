@@ -44,7 +44,7 @@ const package_json_1 = __importDefault(require("./package.json"));
 const args = process.argv.slice(2);
 const argument = args[0];
 const commandPath = process.cwd();
-const configName = '../assets/mongogrator.config.ts';
+const configName = 'mongogrator.config.ts';
 const commandList = [
     {
         command: 'help',
@@ -87,8 +87,8 @@ const processor = () => __awaiter(void 0, void 0, void 0, function* () {
     switch (argument) {
         case 'init':
             {
-                const filePath = path_1.default.join(commandPath, `./${configName}`);
-                const configPath = path_1.default.join(__dirname, `../assets/${configName}`);
+                const filePath = path_1.default.join(commandPath, configName);
+                const configPath = path_1.default.join(__dirname, '../assets/', configName);
                 fs_1.default.copyFileSync(configPath, filePath);
                 console.log(`Config file created at ${filePath}`);
             }
