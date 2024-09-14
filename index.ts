@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import { MongoClient } from 'mongodb'
 import { register } from 'ts-node'
 import packageJson from './package.json'
@@ -41,18 +41,13 @@ const commandList = [
 
 const findConfig = async () => {
 	register()
+
 	const configPath = path.join(commandPath, configName)
 
 	if (!fs.existsSync(configPath)) {
 		console.error(`${configName} not found`)
 	}
-	const config = await import(configPath)
-		.then((mongogratorConfig) => mongogratorConfig.default)
-		.catch((err) => {
-			console.error(`Error importing ${configName}:`, err)
-		})
-
-	return config
+	return require(configPath).default
 }
 
 const processor = async () => {
