@@ -28,7 +28,7 @@
 		"dev": "tsc-watch"
 	},
 	"devDependencies": {
-		"@types/bun": "latest",
+		"@types/bun": "latest"
 	},
 	"dependencies": {
     "typescript": "^5.0.0",
