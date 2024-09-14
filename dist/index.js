@@ -88,8 +88,8 @@ const processor = () => __awaiter(void 0, void 0, void 0, function* () {
         case 'init':
             {
                 const filePath = path_1.default.join(commandPath, `./${configName}`);
-                const templatePath = path_1.default.join(__dirname, `../${configName}`);
-                fs_1.default.copyFileSync(templatePath, filePath);
+                const configPath = path_1.default.join(__dirname, `../assets/${configName}`);
+                fs_1.default.copyFileSync(configPath, filePath);
                 console.log(`Config file created at ${filePath}`);
             }
             break;

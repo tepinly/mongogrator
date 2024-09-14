@@ -60,8 +60,8 @@ const processor = async () => {
 		case 'init':
 			{
 				const filePath = path.join(commandPath, `./${configName}`)
-				const templatePath = path.join(__dirname, `../${configName}`)
-				fs.copyFileSync(templatePath, filePath)
+				const configPath = path.join(__dirname, `../assets/${configName}`)
+				fs.copyFileSync(configPath, filePath)
 				console.log(`Config file created at ${filePath}`)
 			}
 			break
