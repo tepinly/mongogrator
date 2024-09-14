@@ -6,11 +6,10 @@ Mongogrator is a lightweight typescript-based package for MongoDB database migra
 
 The original purpose of the package is to utilize a config file based on `.ts` format to allow importing values and assign them to the config keys.
 
-## Peer dependencies
+## Dependencies
 
-The following dependencies are required in order to use Mongogrator
+Since Mongogrator is mainly a CLI package, it relies on the following dependencies
 
-- typescript
 - mongodb
 - ts-node
 
