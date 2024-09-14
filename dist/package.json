@@ -1,0 +1,22 @@
+{
+    "name": "migrator",
+    "version": "1.0.0",
+    "type": "commonjs",
+    "main": "dist/index.js",
+    "bin": {
+        "mongogrator": "./dist/index.js"
+    },
+    "files": ["dist"],
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc-watch"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0",
+        "mongodb": "^6.8.1",
+        "ts-node": "^10.9.2"
+    }
+}
