@@ -10,8 +10,9 @@ The original purpose of the package is to utilize a config file based on `.ts` f
 
 Since Mongogrator is mainly a CLI package, it relies on the following dependencies
 
-- mongodb
+- typescript
 - ts-node
+- mongodb
 
 ## Setup
 
