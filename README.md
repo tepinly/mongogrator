@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./mongogrator.png" />
+  <img src="assets/mongogrator.png" />
 </p>
 
 Mongogrator is a lightweight typescript-based package for MongoDB database migrations. 
