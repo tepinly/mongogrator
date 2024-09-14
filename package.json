@@ -1,6 +1,6 @@
 {
 	"name": "mongogrator",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "Mongogrator is a lightweight typescript-based package for MongoDB database migrations",
 	"author": "tepinly",
 	"license": "MIT",
@@ -14,6 +14,15 @@
 		"type": "git",
 		"url": "git+https://github.com/tepinly/mongogrator.git"
 	},
+	"keywords": [
+		"migrate",
+		"mongo",
+		"mongodb",
+    "migration",
+		"migrations",
+		"database",
+		"typescript"
+	],
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc-watch"
