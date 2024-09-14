@@ -9,7 +9,7 @@ import packageJson from './package.json'
 const args = process.argv.slice(2)
 const argument = args[0]
 const commandPath = process.cwd()
-const configName = 'mongogrator.config.ts'
+const configName = '../assets/mongogrator.config.ts'
 const commandList = [
 	{
 		command: 'help',
@@ -89,7 +89,7 @@ const processor = async () => {
 					`${config.migrationsPath}/${timestamp}_${fileName}.ts`,
 				)
 
-				const templatePath = path.join(__dirname, '../template.ts')
+				const templatePath = path.join(__dirname, '../assets/template.ts')
 				fs.copyFileSync(templatePath, filePath)
 				console.log(`Migration created at ${filePath}`)
 			}
