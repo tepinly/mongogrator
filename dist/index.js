@@ -44,7 +44,7 @@ const package_json_1 = __importDefault(require("./package.json"));
 const args = process.argv.slice(2);
 const argument = args[0];
 const commandPath = process.cwd();
-const configName = 'mongogrator.config.ts';
+const configName = '../assets/mongogrator.config.ts';
 const commandList = [
     {
         command: 'help',
@@ -108,7 +108,7 @@ const processor = () => __awaiter(void 0, void 0, void 0, function* () {
                 const fileName = args[1];
                 const timestamp = Math.ceil(new Date().getTime() / 1000);
                 const filePath = path_1.default.join(commandPath, `${config.migrationsPath}/${timestamp}_${fileName}.ts`);
-                const templatePath = path_1.default.join(__dirname, '../template.ts');
+                const templatePath = path_1.default.join(__dirname, '../assets/template.ts');
                 fs_1.default.copyFileSync(templatePath, filePath);
                 console.log(`Migration created at ${filePath}`);
             }
