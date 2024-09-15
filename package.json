@@ -29,10 +29,12 @@
 	],
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsc-watch"
+		"dev": "tsc-watch",
+    "lint": "biome check ."
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+    "@biomejs/biome": "^1.9.0"
 	},
 	"dependencies": {
 		"mongodb": "^6.8.1",
