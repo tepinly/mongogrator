@@ -76,111 +76,119 @@ const findConfig = () => __awaiter(void 0, void 0, void 0, function* () {
     (0, ts_node_1.register)({ compilerOptions: tsconfig_json_1.compilerOptions });
     const configPath = path_1.default.join(commandPath, configName);
     if (!fs_1.default.existsSync(configPath)) {
-        return Promise.reject(`${configName} not found`);
+        throw `${configName} not found`;
     }
     return (yield Promise.resolve(`${configPath}`).then(s => __importStar(require(s)))).default;
 });
 const processor = () => __awaiter(void 0, void 0, void 0, function* () {
-    switch (argument) {
-        case 'init':
-            {
-                const filePath = path_1.default.join(commandPath, configName);
-                const configPath = path_1.default.join(__dirname, '../assets/', configName);
-                fs_1.default.copyFileSync(configPath, filePath);
-                console.log(`Config file created at ${filePath}`);
-            }
-            break;
-        case 'add':
-            {
-                if (args.length < 2) {
-                    console.error('Incorrect format: mongogrator add [name]');
-                    process.exit(1);
-                }
-                const config = yield findConfig().catch((err) => {
-                    throw err;
-                });
-                console.log('after config');
-                if (!(fs_1.default.existsSync(config.migrationsPath) &&
-                    fs_1.default.statSync(config.migrationsPath).isDirectory())) {
-                    fs_1.default.mkdirSync(config.migrationsPath);
-                }
-                const commandPath = process.cwd();
-                const fileName = args[1];
-                const timestamp = Math.ceil(new Date().getTime() / 1000);
-                const filePath = path_1.default.join(commandPath, `${config.migrationsPath}/${timestamp}_${fileName}.ts`);
-                const templatePath = path_1.default.join(__dirname, '../assets/template.ts');
-                fs_1.default.copyFileSync(templatePath, filePath);
-                console.log(`Migration created at ${filePath}`);
-            }
-            break;
-        case 'list':
-            {
-                const config = yield findConfig().catch((err) => {
-                    throw err;
-                });
-                const client = new mongodb_1.MongoClient(config.url);
-                const fileNameWidth = 30;
-                const functionsPath = path_1.default.join(commandPath, config.migrationsPath);
-                const files = fs_1.default.readdirSync(functionsPath);
-                yield client.connect();
-                const db = client.db(config.database);
-                for (const file of files) {
-                    const fileName = file.split('.')[0];
-                    const migrationsCollection = db.collection(config.logsCollectionName);
-                    const migrationExists = yield migrationsCollection.findOne({
-                        name: fileName,
-                    });
-                    const list = migrationExists ? 'MIGRATED' : 'NOT MIGRATED';
-                    console.log(fileName.padEnd(fileNameWidth) + list);
-                }
-                yield client.close();
-            }
-            break;
-        case 'migrate':
-            {
-                const config = yield findConfig().catch((err) => {
-                    throw err;
-                });
-                const client = new mongodb_1.MongoClient(config.url);
-                const functionsPath = path_1.default.join(commandPath, config.migrationsPath);
-                const files = fs_1.default.readdirSync(functionsPath);
-                yield client.connect();
-                const db = client.db(config.database);
-                for (const file of files) {
-                    const fileName = file.split('.')[0];
-                    const migrationsCollection = db.collection(config.logsCollectionName);
-                    const migrationExists = yield migrationsCollection.findOne({
-                        name: fileName,
-                    });
-                    if (migrationExists) {
-                        continue;
+    try {
+        switch (argument) {
+            case 'init':
+                try {
+                    const filePath = path_1.default.join(commandPath, configName);
+                    if (fs_1.default.existsSync(filePath)) {
+                        throw `${configName} already initialized`;
                     }
-                    const createdAt = new Date();
-                    yield Promise.resolve(`${path_1.default.join(functionsPath, file)}`).then(s => __importStar(require(s))).then(({ migrate }) => migrate(db));
-                    const updatedAt = new Date();
-                    yield migrationsCollection.insertOne({
-                        name: fileName,
-                        createdAt,
-                        updatedAt,
-                    });
+                    const configPath = path_1.default.join(__dirname, '../assets/', configName);
+                    fs_1.default.copyFileSync(configPath, filePath);
+                    console.log(`Config file created at ${filePath}`);
                 }
-                client.close();
+                catch (err) {
+                    console.error(err);
+                }
+                break;
+            case 'add':
+                {
+                    if (args.length < 2) {
+                        console.error('Incorrect format: mongogrator add [name]');
+                        process.exit(1);
+                    }
+                    const config = yield findConfig();
+                    if (!(fs_1.default.existsSync(config.migrationsPath) &&
+                        fs_1.default.statSync(config.migrationsPath).isDirectory())) {
+                        fs_1.default.mkdirSync(config.migrationsPath);
+                    }
+                    const commandPath = process.cwd();
+                    const fileName = args[1];
+                    const timestamp = Math.ceil(new Date().getTime() / 1000);
+                    const filePath = path_1.default.join(commandPath, `${config.migrationsPath}/${timestamp}_${fileName}.ts`);
+                    const templatePath = path_1.default.join(__dirname, '../assets/template.ts');
+                    fs_1.default.copyFileSync(templatePath, filePath);
+                    console.log(`Migration created at ${filePath}`);
+                }
+                break;
+            case 'list':
+                {
+                    const config = yield findConfig().catch((err) => {
+                        throw console.error(err);
+                    });
+                    const client = new mongodb_1.MongoClient(config.url);
+                    const fileNameWidth = 30;
+                    const functionsPath = path_1.default.join(commandPath, config.migrationsPath);
+                    const files = fs_1.default.readdirSync(functionsPath);
+                    yield client.connect();
+                    const db = client.db(config.database);
+                    for (const file of files) {
+                        const fileName = file.split('.')[0];
+                        const migrationsCollection = db.collection(config.logsCollectionName);
+                        const migrationExists = yield migrationsCollection.findOne({
+                            name: fileName,
+                        });
+                        const list = migrationExists ? 'MIGRATED' : 'NOT MIGRATED';
+                        console.log(fileName.padEnd(fileNameWidth) + list);
+                    }
+                    yield client.close();
+                }
+                break;
+            case 'migrate':
+                {
+                    const config = yield findConfig().catch((err) => {
+                        throw console.error(err);
+                    });
+                    const client = new mongodb_1.MongoClient(config.url);
+                    const functionsPath = path_1.default.join(commandPath, config.migrationsPath);
+                    const files = fs_1.default.readdirSync(functionsPath);
+                    yield client.connect();
+                    const db = client.db(config.database);
+                    for (const file of files) {
+                        const fileName = file.split('.')[0];
+                        const migrationsCollection = db.collection(config.logsCollectionName);
+                        const migrationExists = yield migrationsCollection.findOne({
+                            name: fileName,
+                        });
+                        if (migrationExists) {
+                            continue;
+                        }
+                        const createdAt = new Date();
+                        yield Promise.resolve(`${path_1.default.join(functionsPath, file)}`).then(s => __importStar(require(s))).then(({ migrate }) => migrate(db));
+                        const updatedAt = new Date();
+                        yield migrationsCollection.insertOne({
+                            name: fileName,
+                            createdAt,
+                            updatedAt,
+                        });
+                    }
+                    client.close();
+                }
+                break;
+            case 'version':
+                {
+                    console.log(`Mongogrator v${package_json_1.default.version}`);
+                }
+                break;
+            default: {
+                const commandWidth = 15;
+                console.log('\nMongogrator is a lightweight typescript-based package for MongoDB database migrations\n');
+                console.log('Commands:');
+                for (const row of commandList) {
+                    console.log(row.command.padEnd(commandWidth) + row.description);
+                }
+                console.log('');
             }
-            break;
-        case 'version':
-            {
-                console.log(`Mongogrator v${package_json_1.default.version}`);
-            }
-            break;
-        default: {
-            const commandWidth = 15;
-            console.log('\nMongogrator is a lightweight typescript-based package for MongoDB database migrations\n');
-            console.log('Commands:');
-            for (const row of commandList) {
-                console.log(row.command.padEnd(commandWidth) + row.description);
-            }
-            console.log('');
         }
+    }
+    catch (err) {
+        console.error(err);
     }
 });
 processor();
