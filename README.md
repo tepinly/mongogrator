@@ -62,7 +62,7 @@ This will create the migration file under the directory assigned in the config `
 > more on that in the configuration section
 
 ```ts
-import { type Db } from 'mongodb'
+import type { Db } from 'mongodb'
 
 export const migrate = async (_db: Db): Promise<void> => {
 	// Migration code here
@@ -74,7 +74,7 @@ The migrations are executed through the native MongoDB Node.js driver
 ### Migration query example
 
 ```ts
-import { type Db } from 'mongodb'
+import type { Db } from 'mongodb'
 
 export const migrate = async (_db: Db): Promise<void> => {
 	_db.collection('users').insertOne({ name: 'Alex' })
