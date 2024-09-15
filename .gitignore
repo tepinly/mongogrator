@@ -2,3 +2,5 @@ node_modules
 bun.lockb
 docker-compose.yml
 dist/*
+./mongogrator.config.ts
+migrations/
