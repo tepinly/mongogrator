@@ -40,7 +40,8 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const mongodb_1 = require("mongodb");
 const ts_node_1 = require("ts-node");
-const package_json_1 = __importDefault(require("./package.json"));
+const package_json_1 = __importDefault(require("../package.json"));
+const tsconfig_json_1 = require("../tsconfig.json");
 const args = process.argv.slice(2);
 const argument = args[0];
 const commandPath = process.cwd();
@@ -72,16 +73,12 @@ const commandList = [
     },
 ];
 const findConfig = () => __awaiter(void 0, void 0, void 0, function* () {
-    (0, ts_node_1.register)();
+    (0, ts_node_1.register)({ compilerOptions: tsconfig_json_1.compilerOptions });
     const configPath = path_1.default.join(commandPath, configName);
     if (!fs_1.default.existsSync(configPath)) {
-        console.error(`${configName} not found`);
+        return Promise.reject(`${configName} not found`);
     }
-    const config = yield Promise.resolve(`${configPath}`).then(s => __importStar(require(s))).then((mongogratorConfig) => mongogratorConfig.default)
-        .catch((err) => {
-        console.error(`Error importing ${configName}:`, err);
-    });
-    return config;
+    return (yield Promise.resolve(`${configPath}`).then(s => __importStar(require(s)))).default;
 });
 const processor = () => __awaiter(void 0, void 0, void 0, function* () {
     switch (argument) {
@@ -99,7 +96,10 @@ const processor = () => __awaiter(void 0, void 0, void 0, function* () {
                     console.error('Incorrect format: mongogrator add [name]');
                     process.exit(1);
                 }
-                const config = yield findConfig();
+                const config = yield findConfig().catch((err) => {
+                    throw err;
+                });
+                console.log('after config');
                 if (!(fs_1.default.existsSync(config.migrationsPath) &&
                     fs_1.default.statSync(config.migrationsPath).isDirectory())) {
                     fs_1.default.mkdirSync(config.migrationsPath);
@@ -115,7 +115,9 @@ const processor = () => __awaiter(void 0, void 0, void 0, function* () {
             break;
         case 'list':
             {
-                const config = yield findConfig();
+                const config = yield findConfig().catch((err) => {
+                    throw err;
+                });
                 const client = new mongodb_1.MongoClient(config.url);
                 const fileNameWidth = 30;
                 const functionsPath = path_1.default.join(commandPath, config.migrationsPath);
@@ -136,7 +138,9 @@ const processor = () => __awaiter(void 0, void 0, void 0, function* () {
             break;
         case 'migrate':
             {
-                const config = yield findConfig();
+                const config = yield findConfig().catch((err) => {
+                    throw err;
+                });
                 const client = new mongodb_1.MongoClient(config.url);
                 const functionsPath = path_1.default.join(commandPath, config.migrationsPath);
                 const files = fs_1.default.readdirSync(functionsPath);

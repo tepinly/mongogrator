@@ -1,6 +1,6 @@
 {
 	"name": "mongogrator",
-	"version": "1.0.10",
+	"version": "1.1.0",
 	"description": "Mongogrator is a lightweight typescript-based package for MongoDB database migrations",
 	"author": "tepinly",
 	"license": "MIT",
@@ -9,7 +9,7 @@
 	"bin": {
 		"mongogrator": "./dist/index.js"
 	},
-	"files": ["dist", "assets"],
+	"files": ["dist", "assets", "tsconfig.json"],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/tepinly/mongogrator.git"
@@ -31,8 +31,8 @@
 		"@types/bun": "latest"
 	},
 	"dependencies": {
-    "typescript": "^5.0.0",
+		"typescript": "^5.0.0",
 		"ts-node": "^10.9.2",
-    "mongodb": "^6.8.1"
+		"mongodb": "^6.8.1"
 	}
 }

@@ -4,7 +4,8 @@ import fs from 'fs'
 import path from 'path'
 import { MongoClient } from 'mongodb'
 import { register } from 'ts-node'
-import packageJson from './package.json'
+import packageJson from '../package.json'
+import { compilerOptions } from '../tsconfig.json'
 
 const args = process.argv.slice(2)
 const argument = args[0]
@@ -40,19 +41,14 @@ const commandList = [
 ]
 
 const findConfig = async () => {
-	register()
+	register({ compilerOptions })
 	const configPath = path.join(commandPath, configName)
 
 	if (!fs.existsSync(configPath)) {
-		console.error(`${configName} not found`)
+		return Promise.reject(`${configName} not found`)
 	}
-	const config = await import(configPath)
-		.then((mongogratorConfig) => mongogratorConfig.default)
-		.catch((err) => {
-			console.error(`Error importing ${configName}:`, err)
-		})
 
-	return config
+	return (await import(configPath)).default
 }
 
 const processor = async () => {
@@ -71,7 +67,10 @@ const processor = async () => {
 					console.error('Incorrect format: mongogrator add [name]')
 					process.exit(1)
 				}
-				const config = await findConfig()
+				const config = await findConfig().catch((err) => {
+					throw err
+				})
+				console.log('after config')
 				if (
 					!(
 						fs.existsSync(config.migrationsPath) &&
@@ -96,7 +95,9 @@ const processor = async () => {
 			break
 		case 'list':
 			{
-				const config = await findConfig()
+				const config = await findConfig().catch((err) => {
+					throw err
+				})
 				const client = new MongoClient(config.url)
 				const fileNameWidth = 30
 
@@ -120,7 +121,9 @@ const processor = async () => {
 			break
 		case 'migrate':
 			{
-				const config = await findConfig()
+				const config = await findConfig().catch((err) => {
+					throw err
+				})
 				const client = new MongoClient(config.url)
 
 				const functionsPath = path.join(commandPath, config.migrationsPath)
