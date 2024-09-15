@@ -1,6 +1,6 @@
 {
 	"name": "mongogrator",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "Mongogrator is a lightweight typescript-based package for MongoDB database migrations",
 	"author": "tepinly",
 	"license": "MIT",
@@ -35,11 +35,10 @@
 		"ts-node": "^10.9.2",
 		"mongodb": "^6.8.1"
 	},
-	"contributors": [
+	"maintainers": [
 		{
 			"name": "kerolloz",
-			"email": "contact@kerolloz.dev",
-			"url": "https://github.com/kerolloz"
+			"email": "https://github.com/kerolloz"
 		}
 	]
 }
