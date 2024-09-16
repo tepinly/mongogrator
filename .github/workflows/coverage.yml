@@ -29,5 +29,3 @@ jobs:
 
       - name: Run lint
         run: npm run lint
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v2.3.0
