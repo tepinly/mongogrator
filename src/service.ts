@@ -13,10 +13,7 @@ export const initConfig = async (sourcePath: string, configName: string) => {
 	console.log(`Config file created at ${filePath}`)
 }
 
-export const addMigration = async (
-	sourcePath: string,
-	fileName: string,
-) => {
+export const addMigration = async (sourcePath: string, fileName: string) => {
 	const config = await findConfig(sourcePath)
 	if (
 		!(

@@ -65,7 +65,9 @@ const processor = async () => {
 					console.log(
 						(
 							''.padEnd(2) +
-							`${command.name} ${command.variables ?? ''}`.padEnd(commandWidth) +
+							`${command.name} ${command.variables ?? ''}`.padEnd(
+								commandWidth,
+							) +
 							options
 						).padEnd(decriptionWidth) + command.description,
 					)
