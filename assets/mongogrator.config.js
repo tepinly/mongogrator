@@ -6,4 +6,4 @@ const mongogratorConfig = {
 	format: 'ts', // Format type of the migration files ['ts', 'js']
 }
 
-export default mongogratorConfig
+exports.default(mongogratorConfig)

@@ -2,13 +2,13 @@
   <img src="/assets/mongogrator.png" alt="Mongogrator" />
 </p>
 
-Mongogrator is a lightweight typescript-based package for MongoDB database migrations. 
+Mongogrator is a lightweight database migration package for MongoDB. 
 
 The original purpose of the package is to utilize a config file based on `.ts` format to allow importing values and assign them to the config keys.
 
 ## Dependencies
 
-Since Mongogrator is mainly a CLI package, it relies on the following dependencies
+Since Mongogrator is mainly a CLI based package, it relies on the following dependencies
 
 - typescript
 - ts-node
@@ -27,20 +27,26 @@ mongogrator init
 Or use it directly by adding npx prefix before every command
 
 ```bash
-npx mongogrator init
+npx mongogrator init #--js
 ```
 
-The `init` command spawns the `mongogrator.config.ts` file
+The `init` command spawns the `mongogrator.config.ts` file. You can also pass a `--js` option to generate the config file in js format instead
 
 ## List of commands
 
 ```bash
-help           Display the list of available commands
-version        Display the current Mongogrator version
-init           Initialize config file
-add [name]     Add a new migration under the specified path in the config file
-list           Display the list of migrations and their status [NOT MIGRATED, MIGRATED]
-migrate        Run the migrations
+Commands:
+  help                   Display the list of available commands
+  version                Display the current version of Mongogrator
+  init            --js   Initialize config file
+  add[name]              Adds a new migration file
+  list                   Display the list of all migrations and their status
+  migrate[path]          Run the migrations
+
+Options:
+  --js, -j            Flag the file creation to be in js
+  --help, -h          Add at the end of every command to get detailed help on it
+  --version, -v       Display the current version of Mongogrator
 ```
 
 ## Usage guide
@@ -58,8 +64,8 @@ mongogrator add insert_user
 This will create the migration file under the directory assigned in the config `migrationsPath`
 
 > [!NOTE]
-> The default migrations directory is `./migrations`,
-> more on that in the configuration section
+> - The default migrations directory is `./migrations`
+> - The default migrations file format is `ts` (typescript)
 
 ```ts
 import type { Db } from 'mongodb'
@@ -107,6 +113,12 @@ mongogrator migrate
 
 This will run all the migrations and log them to the database under the specified collection name in the config `logsCollectionName`
 
+For production migrations that are built in a different directory, simply add the directory path at the end of the command
+
+```
+mongogrator migrate /dist
+```
+
 Now if you run the `list` command again, it will reveal that the file migration has completed
 
 ```bash
@@ -129,10 +141,15 @@ Each migration log is created with the `createdAt` date assigned before running 
 ## Configuration
 
 ```ts
-const mongogratorConfig = {
+{
+{
 	url: 'mongodb://localhost:27017', // Cluster url
 	database: 'test', // Database name for which the migrations will be executed
-	migrationsPath: './migrations', // Relative directory to the location of the commands
+	migrationsPath: './migrations', // Migrations directory relative to the location of the commands
 	logsCollectionName: 'migrations', // Name of the logs collection that will be stored in the database
+	format: 'ts', // Format type of the migration files ['ts', 'js']
 }
 ```
+
+> [!IMPORTANT]
+> all path config values are relative to the location from which the command was called
