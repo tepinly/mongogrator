@@ -22,30 +22,54 @@ export const findConfig = async (commandPath: string) => {
 
 export const commandList = [
 	{
-		command: 'help',
+		name: 'help',
 		description: 'Display the list of available commands',
+		detailed: 'Display the list of available commands',
 	},
 	{
-		command: 'version',
+		name: 'version',
 		description: 'Display the current version of Mongogrator',
+		detailed:
+			'Display the current version of Mongogrator. This may differ depending on whether you have it installed locally or running it via npx',
 	},
 	{
-		command: 'init',
+		name: 'init',
 		options: '--js',
 		description: 'Initialize config file',
+		detailed:
+			'Initialize config file. It may be initialized in either ts or js format by adding --js option at the end of the command',
 	},
 	{
-		command: 'add [name]',
-		description:
-			'Add a new migration under the specified path in the config file',
+		name: 'add [name]',
+		description: 'Adds a new migration file',
+		detailed:
+			'Adds a new migration file. The migration file is configured and created in the path relative to the config file. And it can be configured to be either js or ts as well',
 	},
 	{
-		command: 'list',
-		description:
-			'Display the list of migrations and their status [NOT MIGRATED, MIGRATED]',
+		name: 'list',
+		description: 'Display the list of all migrations and their status',
+		detailed:
+			'Displays the list all the migrations under the configured path. Both js & ts. each will have a status of either "MIGRATED" if it has been migrated or "NOT MIGRATED" if it hasn\'t been yet',
 	},
 	{
-		command: 'migrate [path]',
+		name: 'migrate [path]',
 		description: 'Run the migrations',
+		detailed:
+			'Runs all the migrations in the configured path, ones that have been already migrated will be ignored. Additionally, path can be added as an option at the end to specify a built directory for production purposes',
+	},
+]
+
+export const optionList = [
+	{
+		name: '--js, -j',
+		description: 'Flag the file creation to be in js',
+	},
+	{
+		name: '--help, -h',
+		description: 'Add at the end of every command to get detailed help on it',
+	},
+	{
+		name: '--version, -v',
+		description: 'Display the current version of Mongogrator',
 	},
 ]

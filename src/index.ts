@@ -2,7 +2,7 @@
 
 import path from 'node:path'
 import packageJson from '../package.json'
-import { commandList } from './helpers'
+import { commandList, optionList } from './helpers'
 import {
 	addMigration,
 	initConfig,
@@ -13,10 +13,19 @@ import {
 const commandPath = process.cwd()
 const args = process.argv.slice(2)
 const argument = args[0]
+
 const configNameTs = 'mongogrator.config.ts'
 const configNameJs = 'mongogrator.config.js'
 
+const decriptionWidth = 25
+const commandWidth = 16
+
 const processor = async () => {
+	if (args[1] && ['--help', '-h'].includes(args[1].toLowerCase())) {
+		const command = commandList.find((command) => command.name === argument)
+		return console.log(`\n${command?.name}:\n\n${command?.detailed}\n`)
+	}
+
 	try {
 		switch (argument) {
 			case 'init':
@@ -40,23 +49,29 @@ const processor = async () => {
 				await runMigrations(commandPath)
 				break
 			case 'version':
+			case '--version':
+			case '-v':
 				{
 					console.log(`Mongogrator v${packageJson.version}`)
 				}
 				break
 			default: {
-				const decriptionWidth = 35
-				const commandWidth = 18
 				console.log(
-					'\nMongogrator is a lightweight typescript-based package for MongoDB database migrations\n',
+					'\nMongogrator is a lightweight database migration package for MongoDB\n',
 				)
 				console.log('Commands:')
-				for (const row of commandList) {
-					const options = row.options ? `options: ${row.options}` : ''
+				for (const command of commandList) {
+					const options = command.options ? `${command.options}` : ''
 					console.log(
-						(row.command.padEnd(commandWidth) + options).padEnd(
+						(''.padEnd(2) + command.name.padEnd(commandWidth) + options).padEnd(
 							decriptionWidth,
-						) + row.description,
+						) + command.description,
+					)
+				}
+				console.log('\nOptions:')
+				for (const option of optionList) {
+					console.log(
+						''.padEnd(2) + option.name.padEnd(20) + option.description,
 					)
 				}
 				console.log('')
