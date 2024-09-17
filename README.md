@@ -64,8 +64,7 @@ mongogrator add insert_user
 This will create the migration file under the directory assigned in the config `migrationsPath`
 
 > [!NOTE]
-> - The default migrations directory is `./migrations`
-> - The default migrations file format is `ts` (typescript)
+> - The default migrations directory is `./migrations`, and file format is `ts` (typescript)
 
 ```ts
 import type { Db } from 'mongodb'
@@ -141,7 +140,6 @@ Each migration log is created with the `createdAt` date assigned before running 
 ## Configuration
 
 ```ts
-{
 {
 	url: 'mongodb://localhost:27017', // Cluster url
 	database: 'test', // Database name for which the migrations will be executed
