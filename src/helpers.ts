@@ -40,7 +40,8 @@ export const commandList = [
 			'Initialize config file. It may be initialized in either ts or js format by adding --js option at the end of the command',
 	},
 	{
-		name: 'add [name]',
+		name: 'add',
+		variables: '[name]',
 		description: 'Adds a new migration file',
 		detailed:
 			'Adds a new migration file. The migration file is configured and created in the path relative to the config file. And it can be configured to be either js or ts as well',
@@ -52,7 +53,8 @@ export const commandList = [
 			'Displays the list all the migrations under the configured path. Both js & ts. each will have a status of either "MIGRATED" if it has been migrated or "NOT MIGRATED" if it hasn\'t been yet',
 	},
 	{
-		name: 'migrate [path]',
+		name: 'migrate',
+		variables: '[path]',
 		description: 'Run the migrations',
 		detailed:
 			'Runs all the migrations in the configured path, ones that have been already migrated will be ignored. Additionally, path can be added as an option at the end to specify a built directory for production purposes',

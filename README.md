@@ -36,15 +36,17 @@ The `init` command spawns the `mongogrator.config.ts` file. You can also pass a 
 
 ```bash
 Commands:
-help                      Display the list of available commands
-version                   Display the current version of Mongogrator
-init              --js    Initialize config file
-add [name]                Add a new migration
-list                      Display the list of migrations and their status
-migrate [path]            Run the migrations
+  help                   Display the list of available commands
+  version                Display the current version of Mongogrator
+  init            --js   Initialize config file
+  add[name]              Adds a new migration file
+  list                   Display the list of all migrations and their status
+  migrate[path]          Run the migrations
 
 Options:
-  --js     Used to generate files in js format (ts is the default)
+  --js, -j            Flag the file creation to be in js
+  --help, -h          Add at the end of every command to get detailed help on it
+  --version, -v       Display the current version of Mongogrator
 ```
 
 ## Usage guide
@@ -150,4 +152,4 @@ Each migration log is created with the `createdAt` date assigned before running 
 ```
 
 > [!IMPORTANT]
-> all path values are relative to the location from which the command was called
+> all path config values are relative to the location from which the command was called

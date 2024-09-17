@@ -63,9 +63,11 @@ const processor = async () => {
 				for (const command of commandList) {
 					const options = command.options ? `${command.options}` : ''
 					console.log(
-						(''.padEnd(2) + command.name.padEnd(commandWidth) + options).padEnd(
-							decriptionWidth,
-						) + command.description,
+						(
+							''.padEnd(2) +
+							`${command.name} ${command.variables ?? ''}`.padEnd(commandWidth) +
+							options
+						).padEnd(decriptionWidth) + command.description,
 					)
 				}
 				console.log('\nOptions:')
