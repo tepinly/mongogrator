@@ -1,39 +1,48 @@
 import { CliParser } from '../cli/CliParser'
 import { AddCommand } from './AddCommand'
-import { HelpCommand } from './HelpCommand'
-import type { CommandConfig } from './ICommandStrategy'
 import { InitCommand } from './InitCommand'
 import { ListCommand } from './ListCommand'
 import { MigrateCommand } from './MigrateCommand'
 import { VersionCommand } from './VersionCommand'
 
 export class CommandExecutor {
-	private readonly commandName: string
-	private readonly commandConfig: CommandConfig
+	private commandName
+	private commandOptions
 
-	private readonly commandsList = [
+	private commandsList = [
 		InitCommand,
 		AddCommand,
 		ListCommand,
 		MigrateCommand,
 		VersionCommand,
-		HelpCommand,
-	]
+	] as const
 
-	private readonly commandMap = new Map(
+	private commandMap = Object.fromEntries(
 		this.commandsList.flatMap((cmd) =>
 			cmd.triggers.map((trigger) => [trigger, cmd]),
 		),
 	)
 
 	constructor(argv: typeof process.argv) {
-		const cliParser = new CliParser(argv)
-		this.commandName = cliParser.commandName
-		this.commandConfig = cliParser.commandConfig
+		const { commandName, commandOptions } = new CliParser(argv)
+		this.commandName = commandName
+		this.commandOptions = commandOptions
 	}
 
 	public async executeCommand() {
-		const chosenCommand = this.commandMap.get(this.commandName) ?? HelpCommand
-		await new chosenCommand().execute(this.commandConfig)
+		const command = this.commandMap[this.commandName] ?? this.printHelpAndExit()
+		await new command(this.commandOptions).execute()
+	}
+
+	private printHelp(cmd: (typeof this.commandsList)[number]) {
+		console.log(`${cmd.triggers.join(', ').padEnd(25)} ${cmd.description}`)
+	}
+
+	private printHelpAndExit(): never {
+		console.log(
+			'Mongogrator is a lightweight database migration package for MongoDB.\n',
+		)
+		this.commandsList.forEach(this.printHelp)
+		process.exit(0)
 	}
 }

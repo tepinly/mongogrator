@@ -2,34 +2,38 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { MongoClient } from 'mongodb'
 import { ConfigurationHandler } from '../config/ConfigurationHandler'
-import type { CommandConfig, ICommandStrategy } from './ICommandStrategy'
+import { MigrationsService } from '../db/MigrationsService'
+import { BaseCommandStrategy } from './BaseCommandStrategy'
 
-export class ListCommand implements ICommandStrategy {
+export class ListCommand extends BaseCommandStrategy {
 	static triggers = ['list']
+	static description = 'List all migrations and their status'
+	public detailedDescription = `
+		This command lists all the migration files located in the configured migrations directory.
+		It checks each migration file to determine whether it has been applied to the database.
+		Each migration will be displayed with a status of either "MIGRATED" if it has been applied,
+		or "NOT MIGRATED" if it has not been applied yet.
+	`
 
 	async execute() {
+		this.handleHelpFlag()
 		const config = await ConfigurationHandler.readConfig()
-		const client = new MongoClient(config.url)
-		const fileNameWidth = 30
-
 		const migrationsPath = path.join(process.cwd(), config.migrationsPath)
-		const files = fs.readdirSync(migrationsPath)
-
-		await client.connect()
+		const files = fs.readdirSync(migrationsPath).sort()
+		const client = await new MongoClient(config.url).connect()
 		const db = client.db(config.database)
-		const migrationsCollection = db.collection(config.logsCollectionName)
-		for (const file of files) {
-			// TODO: Fix this because it will not work with files that have multiple dots
-			const fileName = file.split('.')[0]
-
-			// TODO: Move this logic into a separate module
-			// TODO: Optimize this by using a single query to get all migrations
-			const migrationExists = await migrationsCollection.findOne({
-				name: fileName,
-			})
-			const list = migrationExists ? 'MIGRATED' : 'NOT MIGRATED'
-			console.log(fileName.padEnd(fileNameWidth) + list)
-		}
+		const migrationsService = new MigrationsService(
+			db.collection(config.logsCollectionName),
+		)
+		const appliedMigrationsSet = await migrationsService.getAppliedSet()
+		const migrations = files.map((file) => {
+			const migration = path.parse(file).name
+			const status = appliedMigrationsSet.has(migration)
+				? 'MIGRATED'
+				: 'NOT MIGRATED'
+			return { migration, status }
+		})
+		console.table(migrations)
 		await client.close()
 	}
 }

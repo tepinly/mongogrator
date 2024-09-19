@@ -1,6 +1,6 @@
 {
 	"name": "mongogrator",
-	"version": "1.2.2",
+	"version": "2.0.0",
 	"description": "Mongogrator is a lightweight typescript-based package for MongoDB database migrations",
 	"author": "tepinly",
 	"license": "MIT",
@@ -36,12 +36,11 @@
 		"@biomejs/biome": "^1.9.1",
 		"@types/bun": "latest",
 		"rimraf": "^6.0.1",
+		"typescript": "^5.6.2",
 		"watch": "^1.0.2"
 	},
 	"dependencies": {
 		"mongodb": "^6.8.1",
-		"ts-node": "^10.9.2",
-		"typescript": "^5.0.0",
 		"zod": "^3.23.8"
 	},
 	"maintainers": [

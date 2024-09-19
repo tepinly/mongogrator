@@ -1,11 +1,16 @@
-import packageJson from '../../package.json'
+import { version } from '../../package.json'
 import { MongogratorLogger } from '../loggers/MongogratorLogger'
-import type { ICommandStrategy } from './ICommandStrategy'
+import { BaseCommandStrategy } from './BaseCommandStrategy'
 
-export class VersionCommand implements ICommandStrategy {
+export class VersionCommand extends BaseCommandStrategy {
 	static triggers = ['version', '-v', '--version']
+	static description = 'Prints the current version of Mongogrator'
+	public detailedDescription = `
+		This command displays the current version of Mongogrator and exits.
+		`
 
 	async execute() {
-		MongogratorLogger.logInfo(`version: ${packageJson.version}`)
+		this.handleHelpFlag()
+		MongogratorLogger.logInfo(`version: ${version}`)
 	}
 }

@@ -2,47 +2,40 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { MongoClient } from 'mongodb'
 import { ConfigurationHandler } from '../config/ConfigurationHandler'
-import type { ICommandStrategy } from './ICommandStrategy'
+import { MigrationsService } from '../db/MigrationsService'
+import { MongogratorLogger } from '../loggers/MongogratorLogger'
+import { BaseCommandStrategy } from './BaseCommandStrategy'
 
-export class MigrateCommand implements ICommandStrategy {
+export class MigrateCommand extends BaseCommandStrategy {
 	static triggers = ['migrate']
+	static description = 'Run all migrations that have not been applied yet'
+	public detailedDescription = `
+		This command executes all pending migration files in the migrations directory.
+		Migrations that have already been applied are skipped.
+		The command should be run from the same location as the config file.
+		The config file determines the location of the migrations folder.
+	`
 
 	async execute() {
+		this.handleHelpFlag()
 		const config = await ConfigurationHandler.readConfig()
-		// TODO: separate the mongo db connection logic into a database module
-		const client = new MongoClient(config.url)
-
-		const functionsPath = path.join(process.cwd(), config.migrationsPath)
-		const files = fs.readdirSync(functionsPath)
-
-		await client.connect()
+		const migrationsPath = path.join(process.cwd(), config.migrationsPath)
+		const files = fs.readdirSync(migrationsPath).sort()
+		const client = await new MongoClient(config.url).connect()
 		const db = client.db(config.database)
-		// TODO: separate the migrations collection logic into a database module
-		const migrationsCollection = db.collection(config.logsCollectionName)
-		for (const file of files) {
-			const fileName = file.split('.')[0]
-
-			// TODO: Move this logic into a separate module
-			const migrationExists = await migrationsCollection.findOne({
-				name: fileName,
-			})
-			if (migrationExists) {
-				continue
-			}
-
-			const createdAt = new Date()
-			await import(path.join(functionsPath, file)).then(({ migrate }) =>
-				migrate(db),
-			)
-			const updatedAt = new Date()
-
-			// TODO: Move this logic into a separate module
-			await migrationsCollection.insertOne({
-				name: fileName,
-				createdAt,
-				updatedAt,
-			})
+		const migrationsService = new MigrationsService(
+			db.collection(config.logsCollectionName),
+		)
+		const appliedMigrationsSet = await migrationsService.getAppliedSet()
+		const pendingMigrations = files.filter(
+			(file) => !appliedMigrationsSet.has(path.parse(file).name),
+		)
+		for (const file of pendingMigrations) {
+			const { migrate } = await import(path.join(migrationsPath, file))
+			await migrate(db)
+			await migrationsService.insertApplied(path.parse(file).name)
+			MongogratorLogger.logInfo(`Migration ${file} applied`)
 		}
-		client.close()
+		await client.close()
 	}
 }

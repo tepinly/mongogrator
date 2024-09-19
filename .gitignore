@@ -3,5 +3,5 @@ bun.lockb
 package-lock.json
 docker-compose.yml
 dist/*
-./mongogrator.config.ts
 migrations/
+mg

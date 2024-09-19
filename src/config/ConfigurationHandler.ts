@@ -1,8 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { register } from 'ts-node'
 import { z } from 'zod'
-import { compilerOptions } from '../../tsconfig.json'
 import { MongogratorError } from '../errors/MongogratorError'
 import { MongogratorLogger } from '../loggers/MongogratorLogger'
 import {
@@ -11,7 +9,7 @@ import {
 	CONFIG_TS_FILE_NAME,
 } from './config'
 
-const configurationSchema = z.object({
+export const mongogratorConfigSchema = z.object({
 	url: z.string().url(), // Validates the cluster URL
 	database: z.string(), // Database name
 	migrationsPath: z.string(), // Migrations directory path
@@ -19,19 +17,15 @@ const configurationSchema = z.object({
 	format: z.enum(['ts', 'js']), // Format must be either 'ts' or 'js'
 })
 
-export type MongogratorConfig = z.infer<typeof configurationSchema>
+type TMongogratorConfig = z.infer<typeof mongogratorConfigSchema>
 
 export namespace ConfigurationHandler {
-	export async function readConfig(): Promise<MongogratorConfig> {
-		register({ compilerOptions })
-
-		const possibleConfigNames = [CONFIG_TS_FILE_NAME, CONFIG_JS_FILE_NAME]
-
-		for (const configFileName of possibleConfigNames) {
+	export async function readConfig(): Promise<TMongogratorConfig> {
+		for (const configFileName of [CONFIG_TS_FILE_NAME, CONFIG_JS_FILE_NAME]) {
 			if (fs.existsSync(configFileName)) {
 				const relativePath = path.join(process.cwd(), configFileName)
 				return await import(relativePath).then((module) =>
-					configurationSchema.parseAsync(module.default),
+					mongogratorConfigSchema.parseAsync(module.default),
 				)
 			}
 		}
@@ -39,18 +33,12 @@ export namespace ConfigurationHandler {
 		throw new MongogratorError(`${CONFIG_FILE_NAME} file not found`)
 	}
 
-	export async function initConfig(configFileName: string) {
-		const configFilePath = path.join(process.cwd(), configFileName)
+	export async function initConfig(fileName: string) {
+		const configFilePath = path.join(process.cwd(), fileName)
 		if (fs.existsSync(configFilePath)) {
-			throw new MongogratorError(`${configFileName} already initialized`)
+			throw new MongogratorError(`${fileName} already initialized`)
 		}
-		const configPath = path.join(
-			__dirname,
-			'..',
-			'..',
-			'assets',
-			configFileName,
-		)
+		const configPath = path.join(__dirname, '..', '..', 'assets', fileName)
 		fs.copyFileSync(configPath, configFilePath)
 		MongogratorLogger.logInfo(`Config file created at ${configFilePath}`)
 	}
