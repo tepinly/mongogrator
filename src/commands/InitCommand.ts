@@ -9,6 +9,6 @@ export class InitCommand implements ICommandStrategy {
 		const configFileName = c.flags.js
 			? CONFIG_JS_FILE_NAME
 			: CONFIG_TS_FILE_NAME
-		await new ConfigurationHandler().initConfig(configFileName)
+		await ConfigurationHandler.initConfig(configFileName)
 	}
 }

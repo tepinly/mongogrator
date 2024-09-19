@@ -9,7 +9,7 @@ export class AddCommand implements ICommandStrategy {
 
 	async execute({ args }: CommandConfig) {
 		const fileName = args[0]
-		const config = await new ConfigurationHandler().readConfig()
+		const config = await ConfigurationHandler.readConfig()
 		if (
 			!(
 				fs.existsSync(config.migrationsPath) &&

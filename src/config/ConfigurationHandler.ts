@@ -21,11 +21,10 @@ const configurationSchema = z.object({
 
 export type MongogratorConfig = z.infer<typeof configurationSchema>
 
-export class ConfigurationHandler {
-	public async readConfig(): Promise<MongogratorConfig> {
+export namespace ConfigurationHandler {
+	export async function readConfig(): Promise<MongogratorConfig> {
 		register({ compilerOptions })
 
-		// TODO: Join path if needed
 		const possibleConfigNames = [CONFIG_TS_FILE_NAME, CONFIG_JS_FILE_NAME]
 
 		for (const configFileName of possibleConfigNames) {
@@ -40,7 +39,7 @@ export class ConfigurationHandler {
 		throw new MongogratorError(`${CONFIG_FILE_NAME} file not found`)
 	}
 
-	public async initConfig(configFileName: string) {
+	export async function initConfig(configFileName: string) {
 		const configFilePath = path.join(process.cwd(), configFileName)
 		if (fs.existsSync(configFilePath)) {
 			throw new MongogratorError(`${configFileName} already initialized`)
