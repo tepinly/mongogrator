@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="/assets/mongogrator.png" alt="Mongogrator" />
+  <img src="./assets/mongogrator.png" alt="Mongogrator" />
 </p>
 
-Mongogrator is a lightweight database migration package for MongoDB. 
+Mongogrator is a lightweight database migration package for MongoDB.
 
 The original purpose of the package is to utilize a config file based on `.ts` format to allow importing values and assign them to the config keys.
 
@@ -64,13 +64,14 @@ mongogrator add insert_user
 This will create the migration file under the directory assigned in the config `migrationsPath`
 
 > [!NOTE]
+>
 > - The default migrations directory is `./migrations`, and file format is `ts` (typescript)
 
 ```ts
 import type { Db } from 'mongodb'
 
 export const migrate = async (_db: Db): Promise<void> => {
-	// Migration code here
+ // Migration code here
 }
 ```
 
@@ -82,7 +83,7 @@ The migrations are executed through the native MongoDB Node.js driver
 import type { Db } from 'mongodb'
 
 export const migrate = async (_db: Db): Promise<void> => {
-	_db.collection('users').insertOne({ name: 'Alex' })
+  _db.collection('users').insertOne({ name: 'Alex' })
 }
 ```
 
@@ -106,7 +107,7 @@ Naturally, the status will be `NOT MIGRATED` as we haven't run the migration yet
 
 Run the migrations simply by calling
 
-```
+```bash
 mongogrator migrate
 ```
 
@@ -114,7 +115,7 @@ This will run all the migrations and log them to the database under the specifie
 
 For production migrations that are built in a different directory, simply add the directory path at the end of the command
 
-```
+```bash
 mongogrator migrate /dist
 ```
 
@@ -141,11 +142,11 @@ Each migration log is created with the `createdAt` date assigned before running 
 
 ```ts
 {
-	url: 'mongodb://localhost:27017', // Cluster url
-	database: 'test', // Database name for which the migrations will be executed
-	migrationsPath: './migrations', // Migrations directory relative to the location of the commands
-	logsCollectionName: 'migrations', // Name of the logs collection that will be stored in the database
-	format: 'ts', // Format type of the migration files ['ts', 'js']
+  url: 'mongodb://localhost:27017', // Cluster url
+  database: 'test', // Database name for which the migrations will be executed
+  migrationsPath: './migrations', // Migrations directory relative to the location of the commands
+  logsCollectionName: 'migrations', // Name of the logs collection that will be stored in the database
+  format: 'ts', // Format type of the migration files ['ts', 'js']
 }
 ```
 

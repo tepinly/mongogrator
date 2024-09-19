@@ -33,15 +33,16 @@
 		"lint": "biome check ."
 	},
 	"devDependencies": {
-		"rimraf": "^6.0.1",
-		"@types/bun": "latest",
 		"@biomejs/biome": "^1.9.1",
-    "watch": "^1.0.2"
+		"@types/bun": "latest",
+		"rimraf": "^6.0.1",
+		"watch": "^1.0.2"
 	},
 	"dependencies": {
 		"mongodb": "^6.8.1",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.0.0"
+		"typescript": "^5.0.0",
+		"zod": "^3.23.8"
 	},
 	"maintainers": [
 		{
