@@ -3,6 +3,7 @@ import path from 'node:path'
 import { MongoClient } from 'mongodb'
 import { ConfigurationHandler } from '../config/ConfigurationHandler'
 import { MigrationsService } from '../db/MigrationsService'
+import { MongogratorError } from '../errors/MongogratorError'
 import { BaseCommandStrategy } from './BaseCommandStrategy'
 
 export class ListCommand extends BaseCommandStrategy {
@@ -18,6 +19,7 @@ export class ListCommand extends BaseCommandStrategy {
 	async execute() {
 		const config = await ConfigurationHandler.readConfig()
 		const migrationsPath = path.join(process.cwd(), config.migrationsPath)
+		this.throwWhenNoMigrationsDirFound(migrationsPath)
 		const files = fs.readdirSync(migrationsPath).sort()
 		const client = await new MongoClient(config.url).connect()
 		const db = client.db(config.database)
@@ -34,5 +36,11 @@ export class ListCommand extends BaseCommandStrategy {
 		})
 		console.table(migrations)
 		await client.close()
+	}
+
+	private throwWhenNoMigrationsDirFound(dirPath: string) {
+		if (!fs.existsSync(dirPath)) {
+			throw new MongogratorError('No migrations directory found')
+		}
 	}
 }
