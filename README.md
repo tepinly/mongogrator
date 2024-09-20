@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/mongogrator.png" alt="Mongogrator" />
+  <img src="https://github.com/user-attachments/assets/bddae006-9533-43c1-b303-6f6de4b6de04" alt="Mongogrator" />
 </p>
 
 Mongogrator is a lightweight database migration package for MongoDB.
