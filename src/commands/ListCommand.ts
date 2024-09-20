@@ -8,7 +8,7 @@ import { BaseCommandStrategy } from './BaseCommandStrategy'
 export class ListCommand extends BaseCommandStrategy {
 	static triggers = ['list']
 	static description = 'List all migrations and their status'
-	public detailedDescription = `
+	static detailedDescription = `
 		This command lists all the migration files located in the configured migrations directory.
 		It checks each migration file to determine whether it has been applied to the database.
 		Each migration will be displayed with a status of either "MIGRATED" if it has been applied,
@@ -16,7 +16,6 @@ export class ListCommand extends BaseCommandStrategy {
 	`
 
 	async execute() {
-		this.handleHelpFlag()
 		const config = await ConfigurationHandler.readConfig()
 		const migrationsPath = path.join(process.cwd(), config.migrationsPath)
 		const files = fs.readdirSync(migrationsPath).sort()

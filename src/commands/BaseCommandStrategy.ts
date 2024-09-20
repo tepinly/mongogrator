@@ -5,17 +5,12 @@ export type CommandOptions = {
 
 export abstract class BaseCommandStrategy {
 	static triggers: string[]
+	static flags: string[] = []
+	static args: string[] = []
 	static description: string
-
-	abstract detailedDescription: string
-	abstract execute(): Promise<void>
+	static detailedDescription: string
 
 	constructor(protected readonly commandOptions: CommandOptions) {}
 
-	protected handleHelpFlag() {
-		if (this.commandOptions.flags.help || this.commandOptions.flags.h) {
-			console.log(this.detailedDescription)
-			process.exit(0)
-		}
-	}
+	abstract execute(): Promise<void>
 }

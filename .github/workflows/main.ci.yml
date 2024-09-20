@@ -17,11 +17,29 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: bun run build
-      - run: bun build --compile --minify --sourcemap  ./src/index.ts --outfile mg
+      - run: bun build --compile --minify --sourcemap ./src/index.ts --outfile mg
 
-      - uses: actions/upload-artifact@v4
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
         with:
-          name: mg
-          path: ./mg
+          draft: false
+          prerelease: false
+          release_name: "Release ${{ github.ref }}"
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./mg
+          asset_name: mg-linux.zip
+          asset_content_type: application/gzip
+
 
 

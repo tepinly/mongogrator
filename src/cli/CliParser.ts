@@ -7,7 +7,7 @@ export class CliParser {
 
 	constructor(argv: typeof process.argv) {
 		this.command = argv[2] ?? ''
-		this.args = argv.slice(3).filter((arg) => !arg.startsWith('--'))
+		this.args = argv.slice(3).filter((arg) => !arg.startsWith('-'))
 		this.flags = Object.fromEntries(
 			argv
 				.filter((arg) => arg.startsWith('-'))

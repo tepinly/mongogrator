@@ -8,6 +8,7 @@ import {
 	CONFIG_JS_FILE_NAME,
 	CONFIG_TS_FILE_NAME,
 } from './config'
+import { configTemplates } from './templates'
 
 export const mongogratorConfigSchema = z.object({
 	url: z.string().url(), // Validates the cluster URL
@@ -17,13 +18,11 @@ export const mongogratorConfigSchema = z.object({
 	format: z.enum(['ts', 'js']), // Format must be either 'ts' or 'js'
 })
 
-type TMongogratorConfig = z.infer<typeof mongogratorConfigSchema>
-
 export namespace ConfigurationHandler {
-	export async function readConfig(): Promise<TMongogratorConfig> {
+	export async function readConfig(customPath = '') {
 		for (const configFileName of [CONFIG_TS_FILE_NAME, CONFIG_JS_FILE_NAME]) {
-			if (fs.existsSync(configFileName)) {
-				const relativePath = path.join(process.cwd(), configFileName)
+			const relativePath = path.join(process.cwd(), customPath, configFileName)
+			if (fs.existsSync(relativePath)) {
 				return await import(relativePath).then((module) =>
 					mongogratorConfigSchema.parseAsync(module.default),
 				)
@@ -33,13 +32,14 @@ export namespace ConfigurationHandler {
 		throw new MongogratorError(`${CONFIG_FILE_NAME} file not found`)
 	}
 
-	export async function initConfig(fileName: string) {
+	export async function initConfig(useJs: boolean) {
+		const fileName = useJs ? CONFIG_JS_FILE_NAME : CONFIG_TS_FILE_NAME
+		const extension = useJs ? 'js' : 'ts'
 		const configFilePath = path.join(process.cwd(), fileName)
 		if (fs.existsSync(configFilePath)) {
 			throw new MongogratorError(`${fileName} already initialized`)
 		}
-		const configPath = path.join(__dirname, '..', '..', 'assets', fileName)
-		fs.copyFileSync(configPath, configFilePath)
+		fs.writeFileSync(configFilePath, configTemplates[extension])
 		MongogratorLogger.logInfo(`Config file created at ${configFilePath}`)
 	}
 }
