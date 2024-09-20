@@ -1,13 +1,13 @@
 
-name: Build
+name: Tag Release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*.*.*"
 
 jobs:
-  build:
+  release_tag:
     runs-on: ubuntu-latest
 
     steps:
