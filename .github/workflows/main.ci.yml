@@ -17,28 +17,16 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: bun run build
-      - run: bun build --compile --minify --sourcemap ./src/index.ts --outfile mg
-
-      - name: release
-        uses: actions/create-release@v1
-        id: create_release
+      - run: make ci
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          draft: false
-          prerelease: false
-          release_name: "Release ${{ github.ref }}"
-          tag_name: "tst"
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./mg
-          asset_name: mg-linux.zip
-          asset_content_type: application/gzip
+          files: |
+            bin/mg-linux-arm64.tar.gz
+            bin/mg-linux.tar.gz
+            bin/mg-mac.tar.gz
+            bin/mg-mac-arm64.tar.gz
+            bin/mg-windows.zip
 
 
 

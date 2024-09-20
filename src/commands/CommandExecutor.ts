@@ -49,18 +49,21 @@ export class CommandExecutor {
 			console.log('Mongogrator CLI')
 			console.log('Usage: mongogrator <command> [options]')
 			console.log('\nCommands:')
-			const PADDING = 30
+			const PADDING_END = 25
+			const PADDING_START = 2
 			const printHelp = ({ triggers, args, flags, description }: TCommand) =>
 				console.log(
+					''.padStart(PADDING_START),
 					`${triggers.join(', ')} ${args.join(', ')}${flags.join(', ')}`.padEnd(
-						PADDING,
+						PADDING_END,
 					),
 					`${description}`,
 				)
 			this.commandsList.forEach(printHelp)
 			console.log('\nFlags:')
 			console.log(
-				'--help, -h'.padEnd(PADDING),
+				''.padStart(PADDING_START),
+				'--help, -h'.padEnd(PADDING_END),
 				'Prints the detailed description of the command',
 			)
 			process.exit(0)
