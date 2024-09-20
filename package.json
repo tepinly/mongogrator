@@ -1,52 +1,52 @@
 {
-	"name": "mongogrator",
-	"version": "1.2.2",
-	"description": "Mongogrator is a lightweight typescript-based package for MongoDB database migrations",
-	"author": "tepinly",
-	"license": "MIT",
-	"type": "commonjs",
-	"main": "dist/index.js",
-	"bin": {
-		"mongogrator": "./dist/index.js"
-	},
-	"files": [
-		"dist",
-		"assets",
-		"tsconfig.json"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/tepinly/mongogrator.git"
-	},
-	"keywords": [
-		"migrate",
-		"mongo",
-		"mongodb",
-		"migration",
-		"migrations",
-		"database",
-		"typescript"
-	],
-	"scripts": {
-		"build": "rimraf dist && tsc",
-		"dev": "watch \"bun run build\" ./src --interval 1 --wait 0.1",
-		"lint": "biome check ."
-	},
-	"devDependencies": {
-		"rimraf": "^6.0.1",
-		"@types/bun": "latest",
-		"@biomejs/biome": "^1.9.1",
+  "name": "mongogrator",
+  "version": "2.0.0",
+  "description": "Mongogrator is a lightweight typescript-based package for MongoDB database migrations",
+  "author": "tepinly",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "bin": {
+    "mongogrator": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "assets",
+    "tsconfig.json"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tepinly/mongogrator.git"
+  },
+  "keywords": [
+    "migrate",
+    "mongo",
+    "mongodb",
+    "migration",
+    "migrations",
+    "database",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "dev": "watch \"bun run build\" ./src --interval 1 --wait 0.1",
+    "lint": "biome check ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.1",
+    "@types/bun": "latest",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.2",
     "watch": "^1.0.2"
-	},
-	"dependencies": {
-		"mongodb": "^6.8.1",
-		"ts-node": "^10.9.2",
-		"typescript": "^5.0.0"
-	},
-	"maintainers": [
-		{
-			"name": "kerolloz",
-			"email": "https://github.com/kerolloz"
-		}
-	]
+  },
+  "dependencies": {
+    "mongodb": "^6.8.1",
+    "zod": "^3.23.8"
+  },
+  "maintainers": [
+    {
+      "name": "kerolloz",
+      "email": "https://github.com/kerolloz"
+    }
+  ]
 }

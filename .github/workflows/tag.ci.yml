@@ -1,0 +1,32 @@
+
+name: Tag Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release_tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run build
+      - run: make ci
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            bin/mg-linux-arm64.tar.gz
+            bin/mg-linux.tar.gz
+            bin/mg-mac.tar.gz
+            bin/mg-mac-arm64.tar.gz
+            bin/mg-windows.zip
+
+
+
