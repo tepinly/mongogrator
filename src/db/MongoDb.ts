@@ -1,4 +1,4 @@
-import { MongoClient, type Collection, type Db } from 'mongodb'
+import { type Collection, type Db, MongoClient } from 'mongodb'
 import type { TMongogratorConfig } from '../config/config'
 import type { TMigration } from './MigrationsService'
 

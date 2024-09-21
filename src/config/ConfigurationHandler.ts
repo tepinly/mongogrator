@@ -6,8 +6,8 @@ import {
 	CONFIG_FILE_NAME,
 	CONFIG_JS_FILE_NAME,
 	CONFIG_TS_FILE_NAME,
-	mongogratorConfigSchema,
 	type TMongogratorConfig,
+	mongogratorConfigSchema,
 } from './config'
 import { configTemplates } from './templates'
 

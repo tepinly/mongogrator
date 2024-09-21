@@ -1,12 +1,9 @@
-import fs from 'node:fs'
 import path from 'node:path'
-import { MongoClient } from 'mongodb'
 import { ConfigurationHandler } from '../config/ConfigurationHandler'
 import { MigrationsService } from '../db/MigrationsService'
-import { MongogratorError } from '../errors/MongogratorError'
+import { Client } from '../db/MongoDb'
 import { MongogratorLogger } from '../loggers/MongogratorLogger'
 import { BaseCommandStrategy } from './BaseCommandStrategy'
-import { Client } from '../db/MongoDb'
 
 export class MigrateCommand extends BaseCommandStrategy {
 	static triggers = ['migrate']
