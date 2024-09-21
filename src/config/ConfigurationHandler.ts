@@ -1,25 +1,20 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { z } from 'zod'
 import { MongogratorError } from '../errors/MongogratorError'
 import { MongogratorLogger } from '../loggers/MongogratorLogger'
 import {
 	CONFIG_FILE_NAME,
 	CONFIG_JS_FILE_NAME,
 	CONFIG_TS_FILE_NAME,
+	type TMongogratorConfig,
+	mongogratorConfigSchema,
 } from './config'
 import { configTemplates } from './templates'
 
-export const mongogratorConfigSchema = z.object({
-	url: z.string().url(), // Validates the cluster URL
-	database: z.string(), // Database name
-	migrationsPath: z.string(), // Migrations directory path
-	logsCollectionName: z.string(), // Logs collection name
-	format: z.enum(['ts', 'js']), // Format must be either 'ts' or 'js'
-})
-
 export namespace ConfigurationHandler {
-	export async function readConfig(customPath = '') {
+	export async function readConfig(
+		customPath = '',
+	): Promise<TMongogratorConfig> {
 		for (const configFileName of [CONFIG_TS_FILE_NAME, CONFIG_JS_FILE_NAME]) {
 			const relativePath = path.join(process.cwd(), customPath, configFileName)
 			if (fs.existsSync(relativePath)) {

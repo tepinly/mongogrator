@@ -28,8 +28,7 @@
     "typescript"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc",
-    "dev": "watch \"bun run build\" ./src --interval 1 --wait 0.1",
+    "make:macos": "rimraf bin/mongogrator && make macos-arm && mv bin/mongogrator-mac-arm64 bin/mongogrator",
     "lint": "biome check ."
   },
   "devDependencies": {

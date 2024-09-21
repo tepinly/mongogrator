@@ -1,6 +1,9 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import type { Collection } from 'mongodb'
+import { MongogratorError } from '../errors/MongogratorError'
 
-type TMigration = {
+export type TMigration = {
 	name: string
 	createdAt: Date
 }
@@ -23,5 +26,17 @@ export class MigrationsService {
 			name: migrationName,
 			createdAt: new Date(),
 		})
+	}
+
+	public static getMigrations(pathArray: string[]) {
+		const migrationsPath = path.join(...pathArray)
+		MigrationsService.throwWhenNoMigrationsDirFound(migrationsPath)
+		return fs.readdirSync(migrationsPath).sort()
+	}
+
+	private static throwWhenNoMigrationsDirFound(dirPath: string) {
+		if (!fs.existsSync(dirPath)) {
+			throw new MongogratorError('No migrations directory found')
+		}
 	}
 }
