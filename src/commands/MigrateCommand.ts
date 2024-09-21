@@ -6,6 +6,7 @@ import { MigrationsService } from '../db/MigrationsService'
 import { MongogratorError } from '../errors/MongogratorError'
 import { MongogratorLogger } from '../loggers/MongogratorLogger'
 import { BaseCommandStrategy } from './BaseCommandStrategy'
+import { Client } from '../db/MongoDb'
 
 export class MigrateCommand extends BaseCommandStrategy {
 	static triggers = ['migrate']
@@ -21,33 +22,21 @@ export class MigrateCommand extends BaseCommandStrategy {
 	async execute() {
 		const customPath = this.commandOptions.args[0] ?? ''
 		const config = await ConfigurationHandler.readConfig(customPath)
-		const migrationsPath = path.join(
-			process.cwd(),
-			customPath,
-			config.migrationsPath,
-		)
-		this.throwWhenNoMigrationsDirFound(migrationsPath)
-		const migrationsFiles = fs.readdirSync(migrationsPath).sort()
-		const client = await new MongoClient(config.url).connect()
-		const db = client.db(config.database)
-		const migrationsService = new MigrationsService(
-			db.collection(config.logsCollectionName),
-		)
-		const appliedMigrationsSet = await migrationsService.getAppliedSet()
-		for (const file of migrationsFiles) {
-			if (!appliedMigrationsSet.has(path.parse(file).name)) {
-				const { migrate } = await import(path.join(migrationsPath, file))
-				await migrate(db)
-				await migrationsService.insertApplied(path.parse(file).name)
-				MongogratorLogger.logInfo(`Migration ${file} applied`)
-			}
-		}
-		await client.close()
-	}
+		const migrationsPath = [process.cwd(), customPath, config.migrationsPath]
+		const migrationFiles = MigrationsService.getMigrations(migrationsPath)
+		const clientInstance = new Client(config)
 
-	private throwWhenNoMigrationsDirFound(dirPath: string) {
-		if (!fs.existsSync(dirPath)) {
-			throw new MongogratorError('No migrations directory found')
-		}
+		await clientInstance.run(async ({ collection, db }) => {
+			const migrationsService = new MigrationsService(collection)
+			const appliedMigrationsSet = await migrationsService.getAppliedSet()
+			for (const file of migrationFiles) {
+				if (!appliedMigrationsSet.has(path.parse(file).name)) {
+					const { migrate } = await import(path.join(...migrationsPath, file))
+					await migrate(db)
+					await migrationsService.insertApplied(path.parse(file).name)
+					MongogratorLogger.logInfo(`Migration ${file} applied`)
+				}
+			}
+		})
 	}
 }

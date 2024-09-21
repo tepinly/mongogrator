@@ -1,9 +1,7 @@
-import fs from 'node:fs'
 import path from 'node:path'
-import { MongoClient } from 'mongodb'
 import { ConfigurationHandler } from '../config/ConfigurationHandler'
 import { MigrationsService } from '../db/MigrationsService'
-import { MongogratorError } from '../errors/MongogratorError'
+import { Client } from '../db/MongoDb'
 import { BaseCommandStrategy } from './BaseCommandStrategy'
 
 export class ListCommand extends BaseCommandStrategy {
@@ -18,29 +16,23 @@ export class ListCommand extends BaseCommandStrategy {
 
 	async execute() {
 		const config = await ConfigurationHandler.readConfig()
-		const migrationsPath = path.join(process.cwd(), config.migrationsPath)
-		this.throwWhenNoMigrationsDirFound(migrationsPath)
-		const files = fs.readdirSync(migrationsPath).sort()
-		const client = await new MongoClient(config.url).connect()
-		const db = client.db(config.database)
-		const migrationsService = new MigrationsService(
-			db.collection(config.logsCollectionName),
-		)
-		const appliedMigrationsSet = await migrationsService.getAppliedSet()
-		const migrations = files.map((file) => {
-			const migration = path.parse(file).name
-			const status = appliedMigrationsSet.has(migration)
-				? 'MIGRATED'
-				: 'NOT MIGRATED'
-			return { migration, status }
-		})
-		console.table(migrations)
-		await client.close()
-	}
+		const files = MigrationsService.getMigrations([
+			process.cwd(),
+			config.migrationsPath,
+		])
+		const clientInstance = new Client(config)
 
-	private throwWhenNoMigrationsDirFound(dirPath: string) {
-		if (!fs.existsSync(dirPath)) {
-			throw new MongogratorError('No migrations directory found')
-		}
+		await clientInstance.run(async ({ collection }) => {
+			const migrationsService = new MigrationsService(collection)
+			const appliedMigrationsSet = await migrationsService.getAppliedSet()
+			const migrations = files.map((file) => {
+				const migration = path.parse(file).name
+				const status = appliedMigrationsSet.has(migration)
+					? 'MIGRATED'
+					: 'NOT MIGRATED'
+				return { migration, status }
+			})
+			console.table(migrations)
+		})
 	}
 }
