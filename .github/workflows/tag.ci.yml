@@ -27,6 +27,4 @@ jobs:
             mongogrator-mac.tar.gz
             mongogrator-mac-arm64.tar.gz
             mongogrator-windows.zip
-
-
-
+            mongogrator-installer.sh
