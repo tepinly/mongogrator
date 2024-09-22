@@ -22,9 +22,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            mongogrator-linux-arm64.tar.gz
-            mongogrator-linux.tar.gz
-            mongogrator-mac.tar.gz
-            mongogrator-mac-arm64.tar.gz
-            mongogrator-windows.zip
+            bin/mongogrator-linux-arm64.tar.gz
+            bin/mongogrator-linux.tar.gz
+            bin/mongogrator-mac.tar.gz
+            bin/mongogrator-mac-arm64.tar.gz
+            bin/mongogrator-windows.zip
             mongogrator-installer.sh
