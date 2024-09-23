@@ -8,20 +8,21 @@ Mongogrator is a very fast database migration CLI for MongoDB. Its purpose is to
 
 Using the following command, it will automatically download, install and add Mongogrator to `PATH`
 
-```
-curl -L https://github.com/tepinly/mongogrator/releases/latest/download/mongogrator-installer.sh | bash
+### MacOS/Linux
+
+```bash
+curl -fsSL git.new/mongogrator-installer.sh | bash
 ```
 
-> [!IMPORTANT]
-> The above command is a bash script, meaning it only runs on macOS and Linux platforms
+### Windows
 
-For Windows platforms, you can
-- go to the [release page](https://github.com/tepinly/mongogrator/releases/latest) and download the zip file manually
-- extract the zip and add the executable to `PATH` (more on how to do so [here](https://medium.com/@kevinmarkvi/how-to-add-executables-to-your-path-in-windows-5ffa4ce61a53))
+```powershell
+powershell -c "irm git.new/mongogrator-installer.ps1 | iex"
+```
 
 ## List of commands
 
-```
+```sh
 Mongogrator CLI
 Usage: mongogrator <command> [options]
 
@@ -44,7 +45,7 @@ A basic guide on how to use the CLI
 
 Start by initializing the config file
 
-```
+```sh
 mongogrator init
 ```
 
@@ -52,7 +53,7 @@ This initializes a `mongogrator.config.ts` file in the location of the command. 
 
 Setup the `url` to the desired mongo cluster, and make sure it's running
 
-```
+```sh
 mongogrator add insert_user
 ```
 
@@ -68,7 +69,7 @@ import type { Db } from 'mongodb'
  * @param _db The mongodb database object that's passed to the migration
  */
 export const migrate = async (_db: Db): Promise<void> => {
-	// Migration code here
+  // Migration code here
 }
 ```
 
@@ -84,7 +85,7 @@ import type { Db } from 'mongodb'
  * @param _db The mongodb database object that's passed to the migration
  */
 export const migrate = async (_db: Db): Promise<void> => {
-	// Migration code here
+  // Migration code here
   _db.collection('users').insertOne({ name: 'Alex' })
 }
 ```
@@ -93,13 +94,13 @@ export const migrate = async (_db: Db): Promise<void> => {
 
 You can add as many migrations as you want and then call the `list` command to display the status of each
 
-```
+```sh
 mongogrator list
 ```
 
 This will print out a list of all the migrations, each has a status of either `NOT MIGRATED` or `MIGRATED`
 
-```
+```sh
 ┌───┬───────────────────────────────┬──────────────┐
 │   │ migration                     │ status       │
 ├───┼───────────────────────────────┼──────────────┤
@@ -113,7 +114,7 @@ Naturally, the status will be `NOT MIGRATED` as we haven't run the migration yet
 
 Run the migrations simply by calling
 
-```
+```sh
 mongogrator migrate
 ```
 
@@ -121,13 +122,13 @@ This will run all the migrations and log them to the database under the specifie
 
 For production purposes, you can pass the config path to the `migrate` command directly if it's not accessible under the same path
 
-```
+```sh
 mongogrator migrate /dist
 ```
 
 Now if you run the `list` command again, it will reveal that the migration file has been successfully executed
 
-```
+```sh
 ┌───┬───────────────────────────────┬──────────────┐
 │   │ migration                     │ status       │
 ├───┼───────────────────────────────┼──────────────┤
