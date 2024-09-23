@@ -28,3 +28,4 @@ jobs:
             bin/mongogrator-mac-arm64.tar.gz
             bin/mongogrator-windows.zip
             mongogrator-installer.sh
+            mongogrator-installer.ps1
