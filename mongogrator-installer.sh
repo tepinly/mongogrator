@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variables
-VERSION="v1.0.2" # Replace with the latest version if necessary
+VERSION="latest" # Replace with the latest version if necessary
 BINARY_NAME="mongogrator"
 
 # Detect platform and architecture
@@ -46,7 +46,7 @@ Darwin)
 esac
 
 # Construct the download URL
-DOWNLOAD_URL="https://github.com/tepinly/mongogrator/releases/download/${VERSION}/${BINARY_NAME}-${PLATFORM}${FILE_EXT}"
+DOWNLOAD_URL="https://github.com/tepinly/mongogrator/releases/${VERSION}/download/${BINARY_NAME}-${PLATFORM}${FILE_EXT}"
 
 # Download the release using curl
 echo "Downloading Mongogrator ${VERSION} for ${PLATFORM}..."
