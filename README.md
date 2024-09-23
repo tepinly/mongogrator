@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/bddae006-9533-43c1-b303-6f6de4b6de04" alt="Mongogrator" />
+  <img src="https://github.com/user-attachments/assets/103be6a4-d02c-473a-b95b-39fd6a84d8a8" alt="Mongogrator" />
 </p>
 
 Mongogrator is a very fast database migration CLI for MongoDB. Its purpose is to easily create and run migrations for development and production stages

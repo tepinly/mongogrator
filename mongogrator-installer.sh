@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variables
-VERSION="v1.0.0" # Replace with the latest version if necessary
+VERSION="v1.0.2" # Replace with the latest version if necessary
 BINARY_NAME="mongogrator"
 
 # Detect platform and architecture
@@ -39,10 +39,6 @@ Darwin)
   esac
   FILE_EXT=".tar.gz"
   ;;
-CYGWIN* | MINGW32* | MSYS* | MINGW*)
-  PLATFORM="windows"
-  FILE_EXT=".zip"
-  ;;
 *)
   echo "Unsupported OS: $OS"
   exit 1
@@ -54,7 +50,7 @@ DOWNLOAD_URL="https://github.com/tepinly/mongogrator/releases/download/${VERSION
 
 # Download the release using curl
 echo "Downloading Mongogrator ${VERSION} for ${PLATFORM}..."
-curl -L -o ${BINARY_NAME}${FILE_EXT} ${DOWNLOAD_URL}
+curl -L --progress-bar -o ${BINARY_NAME}${FILE_EXT} ${DOWNLOAD_URL}
 
 # Check if download was successful
 if [ $? -ne 0 ]; then
@@ -77,12 +73,6 @@ if [[ $FILE_EXT == ".tar.gz" ]]; then
     mv ${BINARY_NAME}-${PLATFORM} ${BINARY_NAME}
     sudo mv ${BINARY_NAME} /usr/local/bin/
   fi
-elif [[ $FILE_EXT == ".zip" ]]; then
-  echo "Extracting ${BINARY_NAME}${FILE_EXT}..."
-  unzip ${BINARY_NAME}${FILE_EXT} -d ${BINARY_NAME}
-
-  # Move the Windows binary
-  sudo mv ${BINARY_NAME}/${BINARY_NAME}.exe /usr/local/bin/${BINARY_NAME}.exe
 fi
 
 # Ensure /usr/local/bin is in the PATH (for Linux and macOS)
