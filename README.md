@@ -2,8 +2,7 @@
   <img src="https://github.com/user-attachments/assets/bddae006-9533-43c1-b303-6f6de4b6de04" alt="Mongogrator" />
 </p>
 
-Mongogrator is a very fast database migration CLI for MongoDB.
-Its purpose is to create and run migrations easily through the CLI, for both development and production stages
+Mongogrator is a very fast database migration CLI for MongoDB. Its purpose is to easily create and run migrations for development and production stages
 
 ## Installing
 
