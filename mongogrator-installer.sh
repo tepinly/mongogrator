@@ -1,57 +1,59 @@
 #!/bin/bash
 
-# Ensure the script runs in an interactive shell
-if [[ ! -t 0 ]]; then
-    exec </dev/tty
-fi
-
 # Variables
+VERSION="v1.0.0" # Replace with the latest version if necessary
 BINARY_NAME="mongogrator"
 
-# Display options for users
-echo "Select the version of Mongogrator to download:"
-echo "1) Linux (x64)"
-echo "2) Linux (ARM64)"
-echo "3) macOS (x64)"
-echo "4) macOS (ARM64)"
-echo "5) Windows (ZIP)"
+# Detect platform and architecture
+OS="$(uname -s)"
+ARCH="$(uname -m)"
 
-# Read user input
-read -p "Enter the number corresponding to your system: " choice
-
-# Set download URL based on user's choice
-case $choice in
-1)
-  ARCH="linux"
+case "$OS" in
+Linux)
+  case "$ARCH" in
+  x86_64)
+    PLATFORM="linux"
+    ;;
+  aarch64)
+    PLATFORM="linux-arm64"
+    ;;
+  *)
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+    ;;
+  esac
   FILE_EXT=".tar.gz"
   ;;
-2)
-  ARCH="linux-arm64"
+Darwin)
+  case "$ARCH" in
+  x86_64)
+    PLATFORM="mac"
+    ;;
+  arm64)
+    PLATFORM="mac-arm64"
+    ;;
+  *)
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+    ;;
+  esac
   FILE_EXT=".tar.gz"
   ;;
-3)
-  ARCH="mac"
-  FILE_EXT=".tar.gz"
-  ;;
-4)
-  ARCH="mac-arm64"
-  FILE_EXT=".tar.gz"
-  ;;
-5)
-  ARCH="windows"
+CYGWIN* | MINGW32* | MSYS* | MINGW*)
+  PLATFORM="windows"
   FILE_EXT=".zip"
   ;;
 *)
-  echo "Invalid option. Exiting..."
+  echo "Unsupported OS: $OS"
   exit 1
   ;;
 esac
 
 # Construct the download URL
-DOWNLOAD_URL="https://github.com/tepinly/mongogrator/releases/latest/download/${BINARY_NAME}-${ARCH}${FILE_EXT}"
+DOWNLOAD_URL="https://github.com/tepinly/mongogrator/releases/download/${VERSION}/${BINARY_NAME}-${PLATFORM}${FILE_EXT}"
 
 # Download the release using curl
-echo "Downloading Mongogrator ${VERSION} for ${ARCH}..."
+echo "Downloading Mongogrator ${VERSION} for ${PLATFORM}..."
 curl -L -o ${BINARY_NAME}${FILE_EXT} ${DOWNLOAD_URL}
 
 # Check if download was successful
@@ -65,13 +67,14 @@ if [[ $FILE_EXT == ".tar.gz" ]]; then
   echo "Extracting ${BINARY_NAME}${FILE_EXT}..."
   tar -xzf ${BINARY_NAME}${FILE_EXT}
 
+  # Check if the binary is inside a bin/ folder
   if [[ -d "bin" ]]; then
     echo "Found bin/ directory, moving executable..."
-    mv bin/${BINARY_NAME}-${ARCH} ${BINARY_NAME}
+    mv bin/${BINARY_NAME}-${PLATFORM} ${BINARY_NAME}
     sudo mv ${BINARY_NAME} /usr/local/bin/
   else
-    echo "Moving ${BINARY_NAME}-${ARCH} to /usr/local/bin..."
-    mv ${BINARY_NAME}-${ARCH} ${BINARY_NAME}
+    echo "Moving ${BINARY_NAME}-${PLATFORM} to /usr/local/bin..."
+    mv ${BINARY_NAME}-${PLATFORM} ${BINARY_NAME}
     sudo mv ${BINARY_NAME} /usr/local/bin/
   fi
 elif [[ $FILE_EXT == ".zip" ]]; then
@@ -85,14 +88,8 @@ fi
 # Ensure /usr/local/bin is in the PATH (for Linux and macOS)
 if [[ ":$PATH:" != *":/usr/local/bin:"* ]]; then
   echo "Adding /usr/local/bin to PATH..."
-  if [ -f ~/.bash_profile ]; then
-    echo 'export PATH=$PATH:/usr/local/bin' >>~/.bash_profile
-    source ~/.bash_profile
-  fi
-  if [ -f ~/.zshrc ]; then
-    echo 'export PATH=$PATH:/usr/local/bin' >>~/.zshrc
-    source ~/.zshrc
-  fi
+  echo 'export PATH=$PATH:/usr/local/bin' >>~/.bash_profile
+  source ~/.bash_profile
 fi
 
 # Cleanup
