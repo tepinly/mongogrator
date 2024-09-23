@@ -2,76 +2,74 @@
   <img src="https://github.com/user-attachments/assets/bddae006-9533-43c1-b303-6f6de4b6de04" alt="Mongogrator" />
 </p>
 
-Mongogrator is a lightweight database migration package for MongoDB.
+Mongogrator is a very fast database migration CLI for MongoDB.
+Its purpose is to create and run migrations easily through the CLI, for both development and production stages
 
-The original purpose of the package is to utilize a config file based on `.ts` format to allow importing values and assign them to the config keys.
+## Installing
 
-## Dependencies
+Using the following command, it will automatically download, install and add Mongogrator to `PATH`
 
-Since Mongogrator is mainly a CLI based package, it relies on the following dependencies
-
-- typescript
-- ts-node
-- mongodb
-
-## Setup
-
-Mongogrator comes with its own CLI. You can either install it globally
-
-```bash
-npm install -g mongogrator
-
-mongogrator init
+```
+curl -L https://github.com/tepinly/mongogrator/releases/latest/download/mongogrator-installer.sh | bash
 ```
 
-Or use it directly by adding npx prefix before every command
+> [!IMPORTANT]
+> The above command is a bash script, meaning it only runs on macOS and Linux platforms
 
-```bash
-npx mongogrator init #--js
-```
-
-The `init` command spawns the `mongogrator.config.ts` file. You can also pass a `--js` option to generate the config file in js format instead
+For Windows platforms, you can
+- go to the [release page](https://github.com/tepinly/mongogrator/releases/latest) and download the zip file manually
+- extract the zip and add the executable to `PATH` (more on how to do so [here](https://medium.com/@kevinmarkvi/how-to-add-executables-to-your-path-in-windows-5ffa4ce61a53))
 
 ## List of commands
 
-```bash
-Commands:
-  help                   Display the list of available commands
-  version                Display the current version of Mongogrator
-  init            --js   Initialize config file
-  add[name]              Adds a new migration file
-  list                   Display the list of all migrations and their status
-  migrate[path]          Run the migrations
+```
+Mongogrator CLI
+Usage: mongogrator <command> [options]
 
-Options:
-  --js, -j            Flag the file creation to be in js
-  --help, -h          Add at the end of every command to get detailed help on it
-  --version, -v       Display the current version of Mongogrator
+Commands:
+   init [--js]               Initialize a new configuration file
+   add                       Creates a new migration file with the provided name
+   list                      List all migrations and their status
+   migrate [config_path]     Run all migrations that have not been applied yet
+   version, -v, --version    Prints the current version of Mongogrator
+
+Flags:
+   --help, -h                Prints the detailed description of the command
 ```
 
 ## Usage guide
 
-A basic guide on how to use the package
+A basic guide on how to use the CLI
 
 ### Adding new migrations
 
-Start by adding a new migration file with the desired name
+Start by initializing the config file
 
-```bash
+```
+mongogrator init
+```
+
+This initializes a `mongogrator.config.ts` file in the location of the command. You can optionally pass a `--js` flag at the end of the command to initialize in a js file
+
+Setup the `url` to the desired mongo cluster, and make sure it's running
+
+```
 mongogrator add insert_user
 ```
 
-This will create the migration file under the directory assigned in the config `migrationsPath`
+This will create the migration file under the directory key assigned in the config `migrationsPath`
 
-> [!NOTE]
->
-> - The default migrations directory is `./migrations`, and file format is `ts` (typescript)
+The following is an example of a newly created ts migration file
 
 ```ts
 import type { Db } from 'mongodb'
 
+/**
+ * This function is called when the migration is run.
+ * @param _db The mongodb database object that's passed to the migration
+ */
 export const migrate = async (_db: Db): Promise<void> => {
- // Migration code here
+	// Migration code here
 }
 ```
 
@@ -82,23 +80,32 @@ The migrations are executed through the native MongoDB Node.js driver
 ```ts
 import type { Db } from 'mongodb'
 
+/**
+ * This function is called when the migration is run.
+ * @param _db The mongodb database object that's passed to the migration
+ */
 export const migrate = async (_db: Db): Promise<void> => {
+	// Migration code here
   _db.collection('users').insertOne({ name: 'Alex' })
 }
 ```
 
 ### Migrations list
 
-You can add as many migrations as you want and then the list command to display the status of each
+You can add as many migrations as you want and then call the `list` command to display the status of each
 
-```bash
+```
 mongogrator list
 ```
 
-This will print out a list of all the migrations, each of them has the status of either `NOT MIGRATED` or `MIGRATED`
+This will print out a list of all the migrations, each has a status of either `NOT MIGRATED` or `MIGRATED`
 
-```bash
-1726339397_add_user           NOT MIGRATED
+```
+┌───┬───────────────────────────────┬──────────────┐
+│   │ migration                     │ status       │
+├───┼───────────────────────────────┼──────────────┤
+│ 0 │ 20240923150201806_insert_user │ NOT MIGRATED │
+└───┴───────────────────────────────┴──────────────┘
 ```
 
 Naturally, the status will be `NOT MIGRATED` as we haven't run the migration yet
@@ -107,22 +114,26 @@ Naturally, the status will be `NOT MIGRATED` as we haven't run the migration yet
 
 Run the migrations simply by calling
 
-```bash
+```
 mongogrator migrate
 ```
 
 This will run all the migrations and log them to the database under the specified collection name in the config `logsCollectionName`
 
-For production migrations that are built in a different directory, simply add the directory path at the end of the command
+For production purposes, you can pass the config path to the `migrate` command directly if it's not accessible under the same path
 
-```bash
+```
 mongogrator migrate /dist
 ```
 
-Now if you run the `list` command again, it will reveal that the file migration has completed
+Now if you run the `list` command again, it will reveal that the migration file has been successfully executed
 
-```bash
-1726339397_add_user           MIGRATED
+```
+┌───┬───────────────────────────────┬──────────────┐
+│   │ migration                     │ status       │
+├───┼───────────────────────────────┼──────────────┤
+│ 0 │ 20240923150201806_insert_user │ MIGRATED     │
+└───┴───────────────────────────────┴──────────────┘
 ```
 
 ### Logs collection schema
@@ -132,11 +143,8 @@ Now if you run the `list` command again, it will reveal that the file migration 
   _id: objectId(),
   name: string,
   createdAt: Date(),
-  updatedAt: Date()
 }
 ```
-
-Each migration log is created with the `createdAt` date assigned before running the migration, and `updatedAt` date is assigned after the migration is completed
 
 ## Configuration
 
@@ -151,4 +159,4 @@ Each migration log is created with the `createdAt` date assigned before running 
 ```
 
 > [!IMPORTANT]
-> all path config values are relative to the location from which the command was called
+> all the config keys with path values are relative to the location of the config file itself
