@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Ensure the script runs in an interactive shell
+if [[ ! -t 0 ]]; then
+    exec </dev/tty
+fi
+
 # Variables
 BINARY_NAME="mongogrator"
 
