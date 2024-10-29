@@ -17,7 +17,7 @@ curl -fsSL git.new/mongogrator-installer.sh | bash
 ### Windows
 
 ```powershell
-powershell -c "irm git.new/mongogrator-installer.ps1 | iex"
+cmd /c "curl -L https://git.new/mongogrator-installer.ps1 | powershell -c -"
 ```
 
 ## List of commands
