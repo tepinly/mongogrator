@@ -36,7 +36,9 @@ export class MigrationsService {
 
 	private static throwWhenNoMigrationsDirFound(dirPath: string) {
 		if (!fs.existsSync(dirPath)) {
-			throw new MongogratorError('No migrations directory found. Try to "add" migrations first.')
+			throw new MongogratorError(
+				'No migrations directory found. Try to "add" migrations first.'
+			)
 		}
 	}
 }
